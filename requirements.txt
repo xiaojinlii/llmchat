@@ -1,16 +1,20 @@
 fschat[model_worker]==0.2.34
-numexpr>=2.8.6 # max version for py38
+numexpr>=2.8.6
 python-dotenv
+cachetools==5.3.2 # qianfan.py use
 
-langchain==0.0.352
+
+
+
+
 
 # online api
 # xinghuo
-websockets>=12.0
+#websockets>=12.0
 # qianfan
-cachetools==5.3.2
+#cachetools==5.3.2
 # qwen
-dashscope
+#dashscope
 
 # vllm
 # vllm==0.2.1.post1

@@ -33,13 +33,13 @@ LLM_MODELS = [
 
 # fastchat controller server
 FSCHAT_CONTROLLER = {
-    "host": os.getenv("FSCHAT_CONTROLLER_HOST", "127.0.0.1"),
+    "host": os.getenv("FSCHAT_CONTROLLER_HOST", "0.0.0.0"),
     "port": int(os.getenv("FSCHAT_CONTROLLER_PORT", 20001)),
     "dispatch_method": "shortest_queue",
 }
 
 # fastchat openai_api server
 FSCHAT_OPENAI_API = {
-    "host": os.getenv("FSCHAT_OPENAI_API_HOST", "127.0.0.1"),
+    "host": os.getenv("FSCHAT_OPENAI_API_HOST", "0.0.0.0"),
     "port": int(os.getenv("FSCHAT_OPENAI_API_PORT", 20000)),
 }
