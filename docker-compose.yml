@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  fastchat-controller:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fastchat:latest
+    networks:
+      - llmchat
+    ports:
+      - "20001:20001"
+      - "20000:20000"
+    entrypoint: ["python3.9", "startup.py", "--openai-api"]
+#  fastchat-model-worker:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    volumes:
+#      - /root/models:/models
+#    image: fastchat:latest
+#    networks:
+#      - llmchat
+#    environment:
+#      - FSCHAT_CONTROLLER_HOST=fastchat-controller
+#      - DEFAULT_MODEL_WORKER_PORT=fastchat-model-worker
+#    ports:
+#      - "21000:21000"
+#    deploy:
+#      resources:
+#        reservations:
+#          devices:
+#            - driver: nvidia
+#              count: 1
+#              capabilities: [gpu]
+#    entrypoint: ["python3.9", "startup.py", "--model-worker"]
+  fastchat-api-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fastchat:latest
+    networks:
+      - llmchat
+    environment:
+      - FSCHAT_CONTROLLER_HOST=fastchat-controller
+      - QWEN_API_HOST=fastchat-api-worker
+      - CYOU_API_HOST=fastchat-api-worker
+    ports:
+      - "21007:21007"
+      - "21011:21011"
+    entrypoint: ["python3.9", "startup.py", "--api-worker"]
+networks:
+  llmchat:
