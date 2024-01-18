@@ -226,6 +226,10 @@ class ApiModelWorker(BaseModelWorker):
     def ai_role(self):
         return self.conv.roles[1]
 
+    @property
+    def system_role(self):
+        return self.conv.roles[2]
+
     def _jsonify(self, data: Dict) -> str:
         '''
         将chat函数返回的结果按照fastchat openai-api-server的格式返回
@@ -249,7 +253,13 @@ class ApiModelWorker(BaseModelWorker):
         ai_role = self.ai_role
         user_start = user_role + ":"
         ai_start = ai_role + ":"
-        for msg in prompt.split(self.conv.sep)[1:-1]:
+
+        messages = prompt.split(self.conv.sep)
+        content = messages[0]
+        if content != "":
+            result.append({"role": self.system_role, "content": content})
+
+        for msg in messages[1:-1]:
             if msg.startswith(user_start):
                 if content := msg[len(user_start):].strip():
                     result.append({"role": user_role, "content": content})
