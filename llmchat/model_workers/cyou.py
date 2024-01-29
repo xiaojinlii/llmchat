@@ -40,6 +40,7 @@ class CyouWorker(ApiModelWorker):
                 "bodyArray": params.messages,
                 "temperature": params.temperature
             }
+            json_data = json.dumps(data)
 
             timestamp = int(time.time() * 1000)
             signature = calculate_md5(params.clientId + params.privateKey + params.api_url + str(timestamp) + json_data)
