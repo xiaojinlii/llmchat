@@ -40,7 +40,6 @@ class CyouWorker(ApiModelWorker):
                 "bodyArray": params.messages,
                 "temperature": params.temperature
             }
-            json_data = json.dumps(data)
 
             timestamp = int(time.time() * 1000)
             signature = calculate_md5(params.clientId + params.privateKey + params.api_url + str(timestamp) + json_data)
@@ -67,10 +66,23 @@ class CyouWorker(ApiModelWorker):
                     if log_verbose:
                         logger.info(f'{self.__class__.__name__}:response: {rjson_data}')
 
-                    yield {
-                        "error_code": 0,
-                        "text": rjson_data["data"]["content"]
-                    }
+                    if rjson_data["msg"] is None:
+                        yield {
+                            "error_code": 0,
+                            "text": rjson_data["data"]["content"]
+                        }
+                    else:
+                        error_msg = rjson_data['msg'].split(', ', 1)[1]
+                        error_msg = error_msg.strip('"')
+                        msg_content = json.loads(error_msg)
+
+                        message = msg_content['error']['message']
+                        status = msg_content['error']['status']
+
+                        yield {
+                            "error_code": status,
+                            "text": message
+                        }
                 else:
                     yield {
                         "error_code": response.status_code,
