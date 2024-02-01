@@ -123,4 +123,3 @@ if __name__ == "__main__":
     MakeFastAPIOffline(app)
     uvicorn.run(app, port=21001)
     # # do_request()
-

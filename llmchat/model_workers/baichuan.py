@@ -11,6 +11,7 @@ import json
 from typing import List, Literal, Dict
 from llmchat.settings import logger, log_verbose
 
+
 def calculate_md5(input_string):
     md5 = hashlib.md5()
     md5.update(input_string.encode('utf-8'))
@@ -20,13 +21,13 @@ def calculate_md5(input_string):
 
 class BaiChuanWorker(ApiModelWorker):
     def __init__(
-        self,
-        *,
-        controller_addr: str = None,
-        worker_addr: str = None,
-        model_names: List[str] = ["baichuan-api"],
-        version: Literal["Baichuan2-53B"] = "Baichuan2-53B",
-        **kwargs,
+            self,
+            *,
+            controller_addr: str = None,
+            worker_addr: str = None,
+            model_names: List[str] = ["baichuan-api"],
+            version: Literal["Baichuan2-53B"] = "Baichuan2-53B",
+            **kwargs,
     ):
         kwargs.update(model_names=model_names, controller_addr=controller_addr, worker_addr=worker_addr)
         kwargs.setdefault("context_len", 32768)
@@ -72,7 +73,7 @@ class BaiChuanWorker(ApiModelWorker):
                         yield {
                             "error_code": resp["code"],
                             "text": text
-                            }
+                        }
                     else:
                         data = {
                             "error_code": resp["code"],
@@ -88,12 +89,10 @@ class BaiChuanWorker(ApiModelWorker):
                         yield data
 
     def get_embeddings(self, params):
-        # TODO: 支持embeddings
         print("embedding")
         print(params)
 
     def make_conv_template(self, conv_template: str = None, model_path: str = None) -> Conversation:
-        # TODO: 确认模板是否需要修改
         return conv.Conversation(
             name=self.model_names[0],
             system_message="",

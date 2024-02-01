@@ -14,13 +14,13 @@ class QwenWorker(ApiModelWorker):
     DEFAULT_EMBED_MODEL = "text-embedding-v1"
 
     def __init__(
-        self,
-        *,
-        version: Literal["qwen-turbo", "qwen-plus"] = "qwen-turbo",
-        model_names: List[str] = ["qwen-api"],
-        controller_addr: str = None,
-        worker_addr: str = None,
-        **kwargs,
+            self,
+            *,
+            version: Literal["qwen-turbo", "qwen-plus"] = "qwen-turbo",
+            model_names: List[str] = ["qwen-api"],
+            controller_addr: str = None,
+            worker_addr: str = None,
+            **kwargs,
     ):
         kwargs.update(model_names=model_names, controller_addr=controller_addr, worker_addr=worker_addr)
         kwargs.setdefault("context_len", 16384)
@@ -72,23 +72,23 @@ class QwenWorker(ApiModelWorker):
         result = []
         i = 0
         while i < len(params.texts):
-            texts = params.texts[i:i+25]
+            texts = params.texts[i:i + 25]
             resp = dashscope.TextEmbedding.call(
                 model=params.embed_model or self.DEFAULT_EMBED_MODEL,
-                input=texts, # 最大25行
+                input=texts,  # 最大25行
                 api_key=params.api_key,
             )
             if resp["status_code"] != 200:
                 data = {
-                            "code": resp["status_code"],
-                            "msg": resp.message,
-                            "error": {
-                                "message": resp["message"],
-                                "type": "invalid_request_error",
-                                "param": None,
-                                "code": None,
-                            }
-                        }
+                    "code": resp["status_code"],
+                    "msg": resp.message,
+                    "error": {
+                        "message": resp["message"],
+                        "type": "invalid_request_error",
+                        "param": None,
+                        "code": None,
+                    }
+                }
                 self.logger.error(f"请求千问 API 时发生错误：{data}")
                 return data
             else:
@@ -98,12 +98,10 @@ class QwenWorker(ApiModelWorker):
         return {"code": 200, "data": result}
 
     def get_embeddings(self, params):
-        # TODO: 支持embeddings
         print("embedding")
         print(params)
 
     def make_conv_template(self, conv_template: str = None, model_path: str = None) -> Conversation:
-        # TODO: 确认模板是否需要修改
         return conv.Conversation(
             name=self.model_names[0],
             system_message="你是一个聪明、对人类有帮助的人工智能，你可以对人类提出的问题给出有用、详细、礼貌的回答。",
