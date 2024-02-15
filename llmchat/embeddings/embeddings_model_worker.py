@@ -1,7 +1,9 @@
 import argparse
+import base64
 import os
 import sys
 import uuid
+import numpy as np
 
 import uvicorn
 from fastapi import Request
@@ -64,12 +66,31 @@ class EmbeddingWorker(BaseModelWorker):
         if not no_register:
             self.init_heart_beat()
 
+    def __encode_base64(self, embeddings: List[List[float]]) -> List[str]:
+        encoded_data_list = []
+        for embedding in embeddings:
+            # 将嵌套浮点数列表转换为numpy数组，dtype设为float32
+            array = np.array(embedding, dtype=np.float32)
+            # 将numpy数组转化为字节串
+            data_bytes = array.tobytes()
+            # 使用base64进行编码
+            encoded_data = base64.b64encode(data_bytes)
+            # 将编码后的字节串转为str并添加到结果列表中
+            encoded_data_list.append(encoded_data.decode('utf-8'))
+        return encoded_data_list
+
     def get_embeddings(self, params):
         self.call_ct += 1
 
         ret = {"embedding": [], "token_num": 0}
         texts = params["input"]
-        out_embeddings = self.embeddings.embed_documents(texts)
+        normalized_embeddings = self.embeddings.embed_documents(texts)
+
+        base64_encode = params.get("encoding_format", None)
+        if base64_encode == "base64":
+            out_embeddings = self.__encode_base64(normalized_embeddings)
+        else:
+            out_embeddings = normalized_embeddings
         ret["embedding"] = out_embeddings
         return ret
 
