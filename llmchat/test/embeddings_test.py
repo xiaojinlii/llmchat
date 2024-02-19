@@ -7,13 +7,13 @@ data = {
     # "input": "哈喽",
     "input": ["哈喽", "嗨"]
 }
-response = requests.post("http://localhost:21015/worker_get_embeddings", json=data)
+response = requests.post("http://localhost:21021/worker_get_embeddings", json=data)
 print(response.json())
 
 # data = {
 #     "input": "哈喽"
 # }
-# response = requests.post("http://localhost:21015/worker_get_query_embeddings", json=data)
+# response = requests.post("http://localhost:21021/worker_get_query_embeddings", json=data)
 # print(response.json())
 
 embeddings = OpenAIEmbeddings(

@@ -116,8 +116,8 @@ async def get_query_embeddings(request: Request):
 def create_embeddings_model_worker():
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", type=str, default="localhost")
-    parser.add_argument("--port", type=int, default=21015)
-    parser.add_argument("--worker-address", type=str, default="http://localhost:21015")
+    parser.add_argument("--port", type=int, default=21021)
+    parser.add_argument("--worker-address", type=str, default="http://localhost:21021")
     parser.add_argument(
         "--controller-address", type=str, default="http://localhost:20001"
     )

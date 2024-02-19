@@ -10,7 +10,7 @@ data = {
         ['你好', '你好'],
     ]
 }
-response = requests.post("http://localhost:21015/worker_compute_score", json=data)
+response = requests.post("http://localhost:21031/worker_compute_score", json=data)
 print(response.json())
 
 
@@ -18,5 +18,5 @@ data = {
     "query": "哈喽",
     "texts": ["哈喽", "嗨", "你好", "早上好"]
 }
-response = requests.post("http://localhost:21015/worker_compute_score_by_query", json=data)
+response = requests.post("http://localhost:21031/worker_compute_score_by_query", json=data)
 print(response.json())

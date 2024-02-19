@@ -88,8 +88,8 @@ async def compute_score_by_query(request: Request):
 def create_reranker_model_worker():
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", type=str, default="localhost")
-    parser.add_argument("--port", type=int, default=21015)
-    parser.add_argument("--worker-address", type=str, default="http://localhost:21015")
+    parser.add_argument("--port", type=int, default=21031)
+    parser.add_argument("--worker-address", type=str, default="http://localhost:21031")
     parser.add_argument(
         "--controller-address", type=str, default="http://localhost:20001"
     )
