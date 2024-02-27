@@ -11,6 +11,7 @@ import random
 from fastchat.conversation import Conversation
 from llmchat.settings import logger, log_verbose
 
+DEFAULT_ANSWER = "徒儿所说的问题竟然难住了为师，徒儿不妨提些其它问题。"
 
 def calculate_md5(input_string):
     md5 = hashlib.md5()
@@ -18,6 +19,25 @@ def calculate_md5(input_string):
     encrypted = md5.hexdigest()
     return encrypted
 
+def replace_str(input_string):
+    if input_string == '' or input_string == 'null':
+        logger.warning("gpt response: text = null!")
+        return DEFAULT_ANSWER
+    print(f"\ninput_string = {input_string}")
+    output_string = input_string.replace('<回答>','')
+    output_string = output_string.replace('</回答>','')
+    output_string = output_string.replace('<答案>','')
+    output_string = output_string.replace('</答案>','')
+    output_string = output_string.replace('<回复>','')
+    output_string = output_string.replace('</回复>','')
+    output_string = output_string.replace('<附加内容>','')
+    output_string = output_string.replace('</附加内容>','')
+    print(f"\noutput_string = {output_string}")
+    output_string.replace('\'','')
+    output_string.replace('\"','')
+    output_string.replace('“','')
+    output_string.replace('”','')
+    return output_string
 
 class CyouWorker(ApiModelWorker):
     def __init__(
@@ -68,9 +88,11 @@ class CyouWorker(ApiModelWorker):
                         logger.info(f'{self.__class__.__name__}:response: {rjson_data}')
 
                     if rjson_data["msg"] is None:
+                        answer = rjson_data["data"]["content"]
+                        answer = replace_str(answer)
                         yield {
                             "error_code": 0,
-                            "text": rjson_data["data"]["content"]
+                            "text": answer
                         }
                     else:
                         error_msg = rjson_data['msg'].split(', ', 1)[1]
