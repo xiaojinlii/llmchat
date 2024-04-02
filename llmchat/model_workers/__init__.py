@@ -1,4 +1,5 @@
 from .base import *
+from .openai import OpenaiWorker
 from .zhipu import ChatGLMWorker
 from .minimax import MiniMaxWorker
 from .xinghuo import XingHuoWorker

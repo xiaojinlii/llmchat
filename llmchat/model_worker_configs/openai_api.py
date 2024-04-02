@@ -14,10 +14,10 @@ config = {
     },
 
     "online_model": {
-        "model_name": "gpt-3.5-turbo",
+        "version": "gpt-3.5-turbo",
         "api_base_url": "https://api.openai.com/v1",
-        "api_key": "",
-        "openai_proxy": "",
+        "api_key": "EMPTY",
+        "provider": "OpenaiWorker",
     }
 
 }
