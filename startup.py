@@ -357,8 +357,9 @@ def run_model_worker(
     set_httpx_config()
 
     kwargs = get_model_worker_config(model_name)
-    host = kwargs.pop("host")
+    # host = kwargs.pop("host")
     port = kwargs.pop("port")
+    host = "0.0.0.0"    # 本地启动的host
     kwargs["model_names"] = [model_name]
     kwargs["controller_address"] = controller_address or fschat_controller_address()
     kwargs["worker_address"] = fschat_model_worker_address(model_name)
