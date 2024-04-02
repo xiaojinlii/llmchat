@@ -222,7 +222,7 @@ class ApiModelWorker(BaseModelWorker):
 
     @property
     def system_role(self):
-        return self.conv.roles[2]
+        return self.conv.roles[2] if len(self.conv.roles) > 2 else None
 
     def _jsonify(self, data: Dict) -> str:
         '''
@@ -250,7 +250,8 @@ class ApiModelWorker(BaseModelWorker):
 
         messages = prompt.split(self.conv.sep)
         content = messages[0]
-        if content != "":
+        system_role = self.system_role
+        if content != "" and system_role is not None:
             result.append({"role": self.system_role, "content": content})
 
         for msg in messages[1:-1]:
