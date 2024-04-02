@@ -1,0 +1,14 @@
+[Unit]
+Description=LLM Chat API Worker Service
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/root/workspace/llmchat
+Environment="PATH=/root/miniconda3/envs/llmchat/bin"
+ExecStart=/root/miniconda3/envs/llmchat/bin/python startup.py -p
+Restart=on-failure
+PIDFile=/var/run/llmchat-api-worker.pid
+
+[Install]
+WantedBy=multi-user.target
