@@ -11,6 +11,8 @@ from typing import List, Literal, Dict
 from llmchat.settings import logger, log_verbose
 
 MODEL_VERSIONS = {
+    "ernie-3.5-8k": "completions",
+    "ernie-4.0-8k": "completions_pro",
     "ernie-bot-4": "completions_pro",
     "ernie-bot": "completions",
     "ernie-bot-turbo": "eb-instant",
