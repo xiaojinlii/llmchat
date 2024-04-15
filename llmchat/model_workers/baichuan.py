@@ -2,6 +2,7 @@ import json
 import time
 import hashlib
 
+import requests
 from fastchat.conversation import Conversation
 from llmchat.model_workers.base import *
 from llmchat.utils import get_httpx_client
@@ -37,23 +38,18 @@ class BaiChuanWorker(ApiModelWorker):
     def do_chat(self, params: ApiChatParams) -> Dict:
         params.load_config(self.model_names[0])
 
-        url = "https://api.baichuan-ai.com/v1/stream/chat"
+        url = "https://api.baichuan-ai.com/v1/chat/completions"
         data = {
             "model": params.version,
             "messages": params.messages,
-            "parameters": {"temperature": params.temperature}
+            "temperature": params.temperature,
+            "stream": True
         }
 
         json_data = json.dumps(data)
-        time_stamp = int(time.time())
-        signature = calculate_md5(params.secret_key + json_data + str(time_stamp))
         headers = {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + params.api_key,
-            "X-BC-Request-Id": "your requestId",
-            "X-BC-Timestamp": str(time_stamp),
-            "X-BC-Signature": signature,
-            "X-BC-Sign-Algo": "MD5",
         }
 
         text = ""
@@ -62,31 +58,42 @@ class BaiChuanWorker(ApiModelWorker):
             logger.info(f'{self.__class__.__name__}:url: {url}')
             logger.info(f'{self.__class__.__name__}:headers: {headers}')
 
-        with get_httpx_client() as client:
-            with client.stream("POST", url, headers=headers, json=data) as response:
-                for line in response.iter_lines():
-                    if not line.strip():
-                        continue
-                    resp = json.loads(line)
-                    if resp["code"] == 0:
-                        text += resp["data"]["messages"][-1]["content"]
+        response = requests.post(url, data=json_data, headers=headers, timeout=60, stream=True)
+
+        if response.status_code == 200:
+            print("请求成功！")
+            print("请求成功，X-BC-Request-Id:", response.headers.get("X-BC-Request-Id"))
+            for line in response.iter_lines():
+                if line:
+                    resp = line.decode('utf-8')
+                    # print(resp, type(resp))
+                    resp = str.replace(resp, 'data: ', '')
+                    if resp == "[DONE]":
+                        pass
+                    else:
+                        resp_json = json.loads(resp)
+                        # print(resp_json)
+                        text += resp_json["choices"][0]["delta"]["content"]
                         yield {
-                            "error_code": resp["code"],
+                            "error_code": 0,
                             "text": text
                         }
-                    else:
-                        data = {
-                            "error_code": resp["code"],
-                            "text": resp["msg"],
-                            "error": {
-                                "message": resp["msg"],
-                                "type": "invalid_request_error",
-                                "param": None,
-                                "code": None,
-                            }
-                        }
-                        self.logger.error(f"请求百川 API 时发生错误：{data}")
-                        yield data
+        else:
+            print("请求失败，状态码:", response.status_code)
+            print("请求失败，body:", response.text)
+            print("请求失败，X-BC-Request-Id:", response.headers.get("X-BC-Request-Id"))
+            data = {
+                "error_code": response.status_code,
+                "text": response.text,
+                "error": {
+                    "message": response.text,
+                    "type": "invalid_request_error",
+                    "param": None,
+                    "code": None,
+                }
+            }
+            self.logger.error(f"请求百川 API 时发生错误：{data}")
+            yield data
 
     def get_embeddings(self, params):
         print("embedding")
